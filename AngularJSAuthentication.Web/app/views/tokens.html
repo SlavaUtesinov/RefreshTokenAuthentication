@@ -13,6 +13,7 @@
                     <th>Client</th>
                     <th>Issued At (UTC)</th>
                     <th>Expires At (UTC)</th>
+                    <th>TheDateTime</th>
                 </tr>
             </thead>
             <tbody>
@@ -31,6 +32,9 @@
                     </td>
                     <td>
                         {{ token.expiresUtc | date:'medium' }}
+                    </td>
+                    <td>
+                        {{ token.theDateTime }}
                     </td>
                 </tr>
             </tbody>

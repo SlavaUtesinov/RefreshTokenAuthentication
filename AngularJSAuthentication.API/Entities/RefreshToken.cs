@@ -20,5 +20,6 @@ namespace AngularJSAuthentication.API.Entities
         public DateTime ExpiresUtc { get; set; }
         [Required]
         public string ProtectedTicket { get; set; }
+        public DateTime TheDateTime { get; set; }
     }
 }

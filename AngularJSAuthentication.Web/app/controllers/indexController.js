@@ -7,5 +7,6 @@ app.controller('indexController', ['$scope', '$location', 'authService', functio
     }
 
     $scope.authentication = authService.authentication;
+    $scope.isAdmin = authService.authentication.isAdmin;
 
 }]);

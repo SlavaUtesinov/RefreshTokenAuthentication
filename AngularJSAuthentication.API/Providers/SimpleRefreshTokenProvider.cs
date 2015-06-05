@@ -34,7 +34,8 @@ namespace AngularJSAuthentication.API.Providers
                     ClientId = clientid, 
                     Subject = context.Ticket.Identity.Name,
                     IssuedUtc = DateTime.UtcNow,
-                    ExpiresUtc = DateTime.UtcNow.AddMinutes(Convert.ToDouble(refreshTokenLifeTime)) 
+                    ExpiresUtc = DateTime.UtcNow.AddMinutes(Convert.ToDouble(refreshTokenLifeTime)), 
+                    TheDateTime = DateTime.Now
                 };
 
                 context.Ticket.Properties.IssuedUtc = token.IssuedUtc;

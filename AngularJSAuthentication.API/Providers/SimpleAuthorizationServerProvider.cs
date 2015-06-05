@@ -97,8 +97,7 @@ namespace AngularJSAuthentication.API.Providers
 
             var identity = new ClaimsIdentity(context.Options.AuthenticationType);
             identity.AddClaim(new Claim(ClaimTypes.Name, context.UserName));
-            identity.AddClaim(new Claim(ClaimTypes.Role, "user"));
-            identity.AddClaim(new Claim(ClaimTypes.Role, "reader"));
+            identity.AddClaim(new Claim(ClaimTypes.Role, "user"));            
             identity.AddClaim(new Claim("sub", context.UserName));
 
             var props = new AuthenticationProperties(new Dictionary<string, string>
@@ -136,6 +135,7 @@ namespace AngularJSAuthentication.API.Providers
                 newIdentity.RemoveClaim(newClaim);
             }
             newIdentity.AddClaim(new Claim("newClaim", "newValue"));
+            newIdentity.AddClaim(new Claim(ClaimTypes.Role, "reader"));
 
             var newTicket = new AuthenticationTicket(newIdentity, context.Ticket.Properties);
             context.Validated(newTicket);

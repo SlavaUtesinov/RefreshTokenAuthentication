@@ -7,7 +7,8 @@ app.factory('authService', ['$http', '$q', 'localStorageService', 'ngAuthSetting
     var _authentication = {
         isAuth: false,
         userName: "",
-        useRefreshTokens: false
+        useRefreshTokens: false,
+        isAdmin: false
     };
 
     var _externalAuthData = {
@@ -47,6 +48,7 @@ app.factory('authService', ['$http', '$q', 'localStorageService', 'ngAuthSetting
             _authentication.isAuth = true;
             _authentication.userName = loginData.userName;
             _authentication.useRefreshTokens = loginData.useRefreshTokens;
+            _authentication.isAdmin = loginData.userName == "Admin";
 
             deferred.resolve(response);
 
