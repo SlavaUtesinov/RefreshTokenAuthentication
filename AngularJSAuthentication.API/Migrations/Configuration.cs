@@ -21,7 +21,8 @@ namespace AngularJSAuthentication.API.Migrations
                 return;
             }
 
-            context.Clients.AddRange(BuildClientsList());
+            //context.Clients.AddRange(BuildClientsList());
+            context.Clients.AddOrUpdate(x => x.Id, BuildClientsList().First(), BuildClientsList().Last());
             context.SaveChanges();
         }
 
@@ -37,7 +38,7 @@ namespace AngularJSAuthentication.API.Migrations
                     ApplicationType =  Models.ApplicationTypes.JavaScript, 
                     Active = true, 
                     RefreshTokenLifeTime = 7200, 
-                    AllowedOrigin = "http://ngauthenticationweb.azurewebsites.net"
+                    AllowedOrigin = "http://localhost:32150"//"http://ngauthenticationweb.azurewebsites.net"
                 },
                 new Client
                 { Id = "consoleApp", 

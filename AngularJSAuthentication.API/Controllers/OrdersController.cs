@@ -11,8 +11,9 @@ namespace AngularJSAuthentication.API.Controllers
     [RoutePrefix("api/Orders")]
     public class OrdersController : ApiController
     {
-        [Authorize]
+        [Authorize(Roles="reader")]
         [Route("")]
+        [HttpGet]
         public IHttpActionResult Get()
         {
             //ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
