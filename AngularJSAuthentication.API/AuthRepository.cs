@@ -37,6 +37,12 @@ namespace AngularJSAuthentication.API
             return result;
         }
 
+        public IList<string> GetUserRoles(string userName)
+        {
+            var user = _userManager.FindByName(userName);
+            return _userManager.GetRoles(user.Id);            
+        }
+
         public async Task<IdentityUser> FindUser(string userName, string password)
         {
             IdentityUser user = await _userManager.FindAsync(userName, password);

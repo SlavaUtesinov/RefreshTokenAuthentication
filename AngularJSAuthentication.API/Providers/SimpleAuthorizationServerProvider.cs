@@ -134,9 +134,21 @@ namespace AngularJSAuthentication.API.Providers
             {
                 newIdentity.RemoveClaim(newClaim);
             }
-            newIdentity.AddClaim(new Claim("newClaim", "newValue"));
-            newIdentity.AddClaim(new Claim(ClaimTypes.Role, "reader"));
+            using (AuthRepository _repo = new AuthRepository())
+            {                
+                foreach (var claim in newIdentity.Claims.Where(x => x.Type == ClaimTypes.Role))
+                    newIdentity.RemoveClaim(claim);
+                
+                var roles = _repo.GetUserRoles(context.Ticket.Identity.Name);
+                foreach(var role in roles)
+                    newIdentity.AddClaim(new Claim(ClaimTypes.Role, role));
 
+                var rolesProp = context.Ticket.Properties.Dictionary.Where(x => x.Key == "roles").FirstOrDefault();
+                if (rolesProp.Key != null)
+                    context.Ticket.Properties.Dictionary.Remove(rolesProp);
+                context.Ticket.Properties.Dictionary.Add("roles", string.Join(",", roles.ToArray()));
+            }            
+            
             var newTicket = new AuthenticationTicket(newIdentity, context.Ticket.Properties);
             context.Validated(newTicket);
 

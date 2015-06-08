@@ -1,6 +1,8 @@
 namespace AngularJSAuthentication.API.Migrations
 {
     using AngularJSAuthentication.API.Entities;
+    using Microsoft.AspNet.Identity;
+    using Microsoft.AspNet.Identity.EntityFramework;
     using System;
     using System.Collections.Generic;
     using System.Data.Entity;
@@ -22,6 +24,9 @@ namespace AngularJSAuthentication.API.Migrations
             }
 
             //context.Clients.AddRange(BuildClientsList());
+            var RoleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(context));
+            RoleManager.Create(new IdentityRole("reader"));            
+            
             context.Clients.AddOrUpdate(x => x.Id, BuildClientsList().First(), BuildClientsList().Last());
             context.SaveChanges();
         }

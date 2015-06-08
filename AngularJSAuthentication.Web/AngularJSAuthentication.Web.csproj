@@ -72,6 +72,7 @@
     <Content Include="app\views\associate.html" />
     <Content Include="app\views\home.html" />
     <Content Include="app\views\login.html" />
+    <Content Include="app\views\notAutorize.html" />
     <Content Include="app\views\orders.html" />
     <Content Include="app\views\refresh.html" />
     <Content Include="app\views\signup.html" />

@@ -38,6 +38,10 @@ app.config(function ($routeProvider) {
         templateUrl: "/app/views/associate.html"
     });
 
+    $routeProvider.when("/notAutorize", {    
+    templateUrl: "/app/views/notAutorize.html"
+});
+
     $routeProvider.otherwise({ redirectTo: "/home" });
 
 });
