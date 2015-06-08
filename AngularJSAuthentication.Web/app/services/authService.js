@@ -8,8 +8,7 @@ app.factory('authService', ['$http', '$q', 'localStorageService', 'ngAuthSetting
         isAuth: false,
         userName: "",
         useRefreshTokens: false,
-        isAdmin: false,
-        dateTime: null
+        isAdmin: false        
     };
 
     var _externalAuthData = {
@@ -42,7 +41,7 @@ app.factory('authService', ['$http', '$q', 'localStorageService', 'ngAuthSetting
 
             if (loginData.useRefreshTokens) {
                 localStorageService.set('authorizationData', { token: response.access_token, userName: loginData.userName, refreshToken: response.refresh_token, useRefreshTokens: true });
-                _authentication.dateTime = new Date();
+                ngAuthSettings.dateTime = new Date();
             }
             else {
                 localStorageService.set('authorizationData', { token: response.access_token, userName: loginData.userName, refreshToken: "", useRefreshTokens: false });
