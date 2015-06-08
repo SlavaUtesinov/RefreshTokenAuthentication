@@ -127,13 +127,7 @@ namespace AngularJSAuthentication.API.Providers
             }
 
             // Change auth ticket for refresh token requests
-            var newIdentity = new ClaimsIdentity(context.Ticket.Identity);
-            
-            var newClaim = newIdentity.Claims.Where(c => c.Type == "newClaim").FirstOrDefault();
-            if (newClaim != null)
-            {
-                newIdentity.RemoveClaim(newClaim);
-            }
+            var newIdentity = new ClaimsIdentity(context.Ticket.Identity);                        
             using (AuthRepository _repo = new AuthRepository())
             {                
                 foreach (var claim in newIdentity.Claims.Where(x => x.Type == ClaimTypes.Role))

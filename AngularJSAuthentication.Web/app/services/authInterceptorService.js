@@ -22,12 +22,12 @@ app.factory('authInterceptorService', ['$q', '$injector', '$location', 'localSto
 
                 $http.post(ngAuthSettings.apiServiceBaseUri + 'token', data, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }).success(function (response) {
 
-                    localStorageService.set('authorizationData', { token: response.access_token, userName: response.userName, refreshToken: response.refresh_token, useRefreshTokens: true });
+                    localStorageService.set('authorizationData', { token: response.access_token, userName: response.userName, refreshToken: response.refresh_token, useRefreshTokens: true, dateTime: ngAuthSettings.dateTime });
                     
                     deferred.resolve(response);
 
                 }).error(function (err, status) {
-                    _logOut();                    
+                    //_logOut();                    
                     deferred.reject(err);
                 });
             }

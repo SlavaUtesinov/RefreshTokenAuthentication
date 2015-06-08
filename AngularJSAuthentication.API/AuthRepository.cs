@@ -90,11 +90,32 @@ namespace AngularJSAuthentication.API
              return await _ctx.SaveChangesAsync() > 0;
         }
 
+        public async Task<bool> RemoveRefreshTokenBySubjectIfExests(string subject)
+        {
+            var item = _ctx.RefreshTokens.Where(x => x.Subject == subject).FirstOrDefault();
+            if (item != null)
+            { 
+                _ctx.RefreshTokens.Remove(item);
+                return await _ctx.SaveChangesAsync() > 0;
+            }
+            return true;
+        }
+
         public async Task<RefreshToken> FindRefreshToken(string refreshTokenId)
         {
             var refreshToken = await _ctx.RefreshTokens.FindAsync(refreshTokenId);
 
             return refreshToken;
+        }
+
+        public bool isAccessTokenElapsed(string userName)
+        {
+            var token = _ctx.RefreshTokens.Where(x => x.Subject == userName).FirstOrDefault();
+            if (token != null)
+                return DateTime.Now.Subtract(token.TheDateTime).Minutes > 2;
+            else
+                return false;
+
         }
 
         public List<RefreshToken> GetAllRefreshTokens()
