@@ -38,7 +38,7 @@ namespace AngularJSAuthentication.API.Migrations
                     ApplicationType =  Models.ApplicationTypes.JavaScript, 
                     Active = true, 
                     RefreshTokenLifeTime = 7200, 
-                    AllowedOrigin = "http://localhost:32150"//"http://ngauthenticationweb.azurewebsites.net"
+                    AllowedOrigin = "http://localhost:9000"//"http://ngauthenticationweb.azurewebsites.net"
                 },
                 new Client
                 { Id = "consoleApp", 
