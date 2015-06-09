@@ -3,6 +3,8 @@ app.factory('authInterceptorService', ['$q', '$injector', '$location', 'localSto
 
     var authInterceptorServiceFactory = {};
     var refreshInProgress = false;
+    //var isLogOut = false;
+
 
 
     var _refreshToken = function () {
@@ -17,7 +19,7 @@ app.factory('authInterceptorService', ['$q', '$injector', '$location', 'localSto
 
                 var data = "grant_type=refresh_token&refresh_token=" + authData.refreshToken + "&client_id=" + ngAuthSettings.clientId;
 
-                localStorageService.remove('authorizationData');
+                //localStorageService.remove('authorizationData');
                 var $http = $injector.get("$http");
 
                 $http.post(ngAuthSettings.apiServiceBaseUri + 'token', data, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }).success(function (response) {
@@ -27,8 +29,9 @@ app.factory('authInterceptorService', ['$q', '$injector', '$location', 'localSto
                     deferred.resolve(response);
 
                 }).error(function (err, status) {
-                    //_logOut();                    
-                    deferred.reject(err);
+                    //_logOut();                                        
+                    //isLogOut = true;
+                    deferred.reject(status);
                 });
             }
         }
@@ -61,7 +64,14 @@ app.factory('authInterceptorService', ['$q', '$injector', '$location', 'localSto
                     },
                     function (err) {
                         refreshInProgress = false;
-                        deferred.reject(err);
+
+                        //Тут полное разлогирование
+                        var authService = $injector.get("authService");
+                        authService.logOut();
+                        $location.path('/login');
+
+                        deferred.resolve(config);
+                        //deferred.reject(err);//По ходу здесь надо делать resolve
                     }
                 );
             }
@@ -95,8 +105,14 @@ app.factory('authInterceptorService', ['$q', '$injector', '$location', 'localSto
             //        return $q.reject(rejection);
             //    }
             //}
-            //authService.logOut();
-            $location.path('/notAutorize');
+            //authService.logOut();            
+            if (!refreshInProgress)
+                $location.path('/notAutorize');
+            //if (isLogOut) {
+            //    $location.path('/login');
+            //    isLogOut = false;
+            //}
+
         }
         return $q.reject(rejection);
     }

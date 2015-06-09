@@ -112,7 +112,10 @@ namespace AngularJSAuthentication.API
         {
             var token = _ctx.RefreshTokens.Where(x => x.Subject == userName).FirstOrDefault();
             if (token != null)
-                return DateTime.Now.Subtract(token.TheDateTime).Minutes > 2;
+            {
+                var time = new TimeSpan(DateTime.Now.Subtract(token.TheDateTime).Ticks);
+                return time.TotalMinutes > 2;
+            }
             else
                 return false;
 
