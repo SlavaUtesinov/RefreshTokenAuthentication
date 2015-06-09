@@ -117,6 +117,12 @@ namespace AngularJSAuthentication.API.Providers
 
         public override Task GrantRefreshToken(OAuthGrantRefreshTokenContext context)
         {
+            //if (context.Response.StatusCode == 401)
+            //{ 
+            //    context.Rejected();
+            //    return Task.FromResult<object>(null);
+            //}
+
             var originalClient = context.Ticket.Properties.Dictionary["as:client_id"];
             var currentClient = context.ClientId;
 

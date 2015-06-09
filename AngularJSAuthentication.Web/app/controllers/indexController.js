@@ -3,7 +3,7 @@ app.controller('indexController', ['$scope', '$location', 'authService', functio
 
     $scope.logOut = function () {
         authService.logOut();
-        $location.path('/home');
+        $location.path('/login');
     }
 
     $scope.authentication = authService.authentication;

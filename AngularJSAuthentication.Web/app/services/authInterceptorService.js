@@ -66,6 +66,11 @@ app.factory('authInterceptorService', ['$q', '$injector', '$location', 'localSto
                         refreshInProgress = false;
 
                         //Тут полное разлогирование
+                        ngAuthSettings.dateTime = null;
+                        //Если этого не сделать, то возможная такая ситуация: после некоторой работы происходит по тем или иным причинам разлогин,
+                        //но при попытке снова залогиниться, т.к. ngAuthSettings.dateTime всё ещё существут, то по прошествии 1 минуты будет сделан запрос на обновление
+                        //refresh token, что привидет к непонятным последсвиям
+
                         var authService = $injector.get("authService");
                         authService.logOut();
                         $location.path('/login');

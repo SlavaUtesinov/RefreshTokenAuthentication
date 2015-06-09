@@ -71,8 +71,9 @@ namespace AngularJSAuthentication.API.Providers
             using (AuthRepository _repo = new AuthRepository())
             {
                 var refreshToken = await _repo.FindRefreshToken(hashedTokenId);
+                var dateDiff = (new TimeSpan(DateTime.Now.Subtract(refreshToken.TheDateTime).Ticks));
 
-                if (refreshToken != null )
+                if (refreshToken != null)
                 {
                     //Get protectedTicket from refreshToken class
                     context.DeserializeTicket(refreshToken.ProtectedTicket);
