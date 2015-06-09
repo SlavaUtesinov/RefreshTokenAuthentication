@@ -106,7 +106,7 @@ app.factory('authInterceptorService', ['$q', '$injector', '$location', 'localSto
             //    }
             //}
             //authService.logOut();            
-            if (!refreshInProgress)
+            if (!refreshInProgress && $location.path() != '/login')
                 $location.path('/notAutorize');
             //if (isLogOut) {
             //    $location.path('/login');
