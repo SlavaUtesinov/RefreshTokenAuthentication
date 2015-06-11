@@ -33,6 +33,22 @@ namespace AngularJSAuthentication.API.Controllers
             _repo = new AuthRepository();
         }
 
+        
+        [Authorize]
+        [Route("deleteToken")]
+        [HttpPost]
+        public async Task<IHttpActionResult> DeleteToken()
+        {
+            var refreshToken = Request.Headers.Where(x => x.Key == "X-refreshToken").First().Value.First();
+            using (var repo = new AuthRepository()) 
+            {
+                string hashedTokenId = Helper.GetHash(refreshToken);
+                await repo.RemoveRefreshToken(hashedTokenId);
+            }
+
+            return Ok();
+        }
+
         // POST api/Account/Register
         [AllowAnonymous]
         [Route("Register")]
