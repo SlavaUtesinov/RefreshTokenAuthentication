@@ -2,13 +2,14 @@
 app.factory('authService', ['$http', '$q', 'localStorageService', 'ngAuthSettings', '$location', function ($http, $q, localStorageService, ngAuthSettings, $location) {
 
     var serviceBase = ngAuthSettings.apiServiceBaseUri;
-    var authServiceFactory = {};
+    var authServiceFactory = {};    
 
     var _authentication = {
         isAuth: false,
         userName: "",
         useRefreshTokens: false,
-        isAdmin: false        
+        isAdmin: false,
+        dateTime: null
     };
 
     var _externalAuthData = {
@@ -41,7 +42,7 @@ app.factory('authService', ['$http', '$q', 'localStorageService', 'ngAuthSetting
 
             if (loginData.useRefreshTokens) {
                 localStorageService.set('authorizationData', { token: response.access_token, userName: loginData.userName, refreshToken: response.refresh_token, useRefreshTokens: true, dateTime: (new Date()) });
-                ngAuthSettings.dateTime = new Date();
+                _authentication.dateTime = new Date();
             }
             else {
                 localStorageService.set('authorizationData', { token: response.access_token, userName: loginData.userName, refreshToken: "", useRefreshTokens: false });
@@ -65,7 +66,7 @@ app.factory('authService', ['$http', '$q', 'localStorageService', 'ngAuthSetting
     var _logOut = function () {                                
         localStorageService.remove('authorizationData');
 
-        ngAuthSettings.dateTime = null;
+        _authentication.dateTime = null;
         _authentication.isAuth = false;
         _authentication.userName = "";
         _authentication.useRefreshTokens = false;
@@ -80,7 +81,7 @@ app.factory('authService', ['$http', '$q', 'localStorageService', 'ngAuthSetting
             _authentication.isAuth = true;
             _authentication.userName = authData.userName;
             _authentication.useRefreshTokens = authData.useRefreshTokens;
-            ngAuthSettings.dateTime = new Date(authData.dateTime);
+            _authentication.dateTime = new Date(authData.dateTime);
         }
 
     };
@@ -88,6 +89,7 @@ app.factory('authService', ['$http', '$q', 'localStorageService', 'ngAuthSetting
     var _refreshToken = function () {
         var deferred = $q.defer();
 
+        _authentication.dateTime = new Date();
         var authData = localStorageService.get('authorizationData');
 
         if (authData) {
@@ -96,11 +98,11 @@ app.factory('authService', ['$http', '$q', 'localStorageService', 'ngAuthSetting
 
                 var data = "grant_type=refresh_token&refresh_token=" + authData.refreshToken + "&client_id=" + ngAuthSettings.clientId;
 
-                localStorageService.remove('authorizationData');
+                //localStorageService.remove('authorizationData');
 
                 $http.post(serviceBase + 'token', data, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }).success(function (response) {
 
-                    localStorageService.set('authorizationData', { token: response.access_token, userName: response.userName, refreshToken: response.refresh_token, useRefreshTokens: true });
+                    localStorageService.set('authorizationData', { token: response.access_token, userName: response.userName, refreshToken: response.refresh_token, useRefreshTokens: true, dateTime: _authentication.dateTime });
 
                     deferred.resolve(response);
 

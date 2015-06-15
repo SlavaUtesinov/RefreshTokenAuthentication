@@ -3,62 +3,71 @@ app.factory('authInterceptorService', ['$q', '$injector', '$location', 'localSto
 
     var authInterceptorServiceFactory = {};
     var refreshInProgress = false;
-    //var isLogOut = false;
+    var _authService = {};
+    //var isLogOut = false;    
 
+    //var _refreshToken = function () {
+    //    var deferred = $q.defer();        
 
+    //    var authData = localStorageService.get('authorizationData');
 
-    var _refreshToken = function () {
-        var deferred = $q.defer();
-        refreshInProgress = true;
+    //    if (authData) {
 
-        var authData = localStorageService.get('authorizationData');
+    //        if (authData.useRefreshTokens) {
 
-        if (authData) {
+    //            var data = "grant_type=refresh_token&refresh_token=" + authData.refreshToken + "&client_id=" + ngAuthSettings.clientId;
 
-            if (authData.useRefreshTokens) {
+    //            //localStorageService.remove('authorizationData');
+    //            var $http = $injector.get("$http");
 
-                var data = "grant_type=refresh_token&refresh_token=" + authData.refreshToken + "&client_id=" + ngAuthSettings.clientId;
+    //            $http.post(ngAuthSettings.apiServiceBaseUri + 'token', data, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }).success(function (response) {
 
-                //localStorageService.remove('authorizationData');
-                var $http = $injector.get("$http");
-
-                $http.post(ngAuthSettings.apiServiceBaseUri + 'token', data, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }).success(function (response) {
-
-                    localStorageService.set('authorizationData', { token: response.access_token, userName: response.userName, refreshToken: response.refresh_token, useRefreshTokens: true, dateTime: ngAuthSettings.dateTime });
+    //                localStorageService.set('authorizationData', { token: response.access_token, userName: response.userName, refreshToken: response.refresh_token, useRefreshTokens: true, dateTime: ngAuthSettings.dateTime });
                     
-                    deferred.resolve(response);
+    //                deferred.resolve(response);
 
-                }).error(function (err, status) {
-                    //_logOut();                                        
-                    //isLogOut = true;
-                    deferred.reject(status);
-                });
-            }
+    //            }).error(function (err, status) {
+    //                //_logOut();                                        
+    //                //isLogOut = true;
+    //                deferred.reject(status);
+    //            });
+    //        }
+    //    }
+
+    //    return deferred.promise;
+    //};
+
+    var _setHeaders = function (config) {
+        config.headers = config.headers || {
+        };
+        var authData = localStorageService.get('authorizationData');
+        if (authData) {
+            config.headers.Authorization = 'Bearer ' + authData.token;
         }
-
-        return deferred.promise;
-    };
+        return config;
+    }
 
     var _request = function (config) {
 
         var deferred = $q.defer();
 
+        if (!_authService)
+            var _authService = $injector.get("authService");        
+
         if (!refreshInProgress) {            
 
             var diff = 0;
-            if (ngAuthSettings.dateTime)
-                diff = ((new Date()) - ngAuthSettings.dateTime) / 1000 / 60;
+            if (_authService.authentication.dateTime)
+                diff = ((new Date()) - _authService.authentication.dateTime) / 1000 / 60;
 
-            if (diff > 1) {
-                ngAuthSettings.dateTime = new Date();
+            if (diff > 1) {                
 
-                _refreshToken().then(function () {
-                        config.headers = config.headers || {
-                        };
-                        var authData = localStorageService.get('authorizationData');
-                        if (authData) {
-                            config.headers.Authorization = 'Bearer ' + authData.token;
-                        }
+                refreshInProgress = true;
+                //var authService = $injector.get("authService");
+
+                _authService.refreshToken().then(function () {
+                        config = _setHeaders(config);
+
                         refreshInProgress = false;
                         deferred.resolve(config);
                     },
@@ -71,8 +80,8 @@ app.factory('authInterceptorService', ['$q', '$injector', '$location', 'localSto
                         //но при попытке снова залогиниться, т.к. ngAuthSettings.dateTime всё ещё существут, то по прошествии 1 минуты будет сделан запрос на обновление
                         //refresh token, что привидет к непонятным последсвиям
 
-                        var authService = $injector.get("authService");
-                        authService.logOut();                        
+                        //var authService = $injector.get("authService");
+                        //authService.logOut();                        
 
                         deferred.resolve(config);
                         //deferred.reject(err);//По ходу здесь надо делать resolve
@@ -80,19 +89,13 @@ app.factory('authInterceptorService', ['$q', '$injector', '$location', 'localSto
                 );
             }
             else {
-
-                config.headers = config.headers || {};
-                var authData = localStorageService.get('authorizationData');
-                if (authData) {
-                    config.headers.Authorization = 'Bearer ' + authData.token;
-                }
+                config = _setHeaders(config);
                 deferred.resolve(config);
             }
         }
-        else {
-            deferred.resolve(config);
-        }
-
+        else
+            //Эта ветка работает во время обновления токенов => ничего не трогаем
+            deferred.resolve(config);        
                          
         //return config;
         return deferred.promise;
@@ -125,7 +128,7 @@ app.factory('authInterceptorService', ['$q', '$injector', '$location', 'localSto
     }
 
     authInterceptorServiceFactory.request = _request;
-    authInterceptorServiceFactory.responseError = _responseError;
+    authInterceptorServiceFactory.responseError = _responseError;    
 
     return authInterceptorServiceFactory;
 }]);
