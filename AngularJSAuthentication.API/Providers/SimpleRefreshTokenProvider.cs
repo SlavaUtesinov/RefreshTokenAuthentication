@@ -57,17 +57,21 @@ namespace AngularJSAuthentication.API.Providers
             using (AuthRepository _repo = new AuthRepository())
             {
                 var refreshToken = await _repo.FindRefreshToken(hashedTokenId);
-                var dateDiff = (new TimeSpan(DateTime.Now.Subtract(refreshToken.TheDateTime).Ticks));
-
-                if (dateDiff.TotalMinutes <= 2)
+                if(refreshToken != null)
                 {
-                    if (refreshToken != null)
+                    var dateDiff = (new TimeSpan(DateTime.Now.Subtract(refreshToken.TheDateTime).Ticks));
+
+                    if (dateDiff.TotalMinutes <= 2)
                     {
-                        //Get protectedTicket from refreshToken class
-                        context.DeserializeTicket(refreshToken.ProtectedTicket);                        
-                    }
-                }                
-                //В противном случае мы не устанавливаем access token и всё само собой ломается
+                        if (refreshToken != null)
+                        {
+                            //Get protectedTicket from refreshToken class
+                            context.DeserializeTicket(refreshToken.ProtectedTicket);                        
+                        }
+                    }                
+                    //В противном случае мы не устанавливаем access token и всё само собой ломается
+                }
+                
             }            
         }
 
