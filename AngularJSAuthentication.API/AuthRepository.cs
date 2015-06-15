@@ -106,20 +106,7 @@ namespace AngularJSAuthentication.API
             var refreshToken = await _ctx.RefreshTokens.FindAsync(refreshTokenId);
 
             return refreshToken;
-        }
-
-        public bool isAccessTokenElapsed(string userName)
-        {
-            var token = _ctx.RefreshTokens.Where(x => x.Subject == userName).FirstOrDefault();
-            if (token != null)
-            {
-                var time = new TimeSpan(DateTime.Now.Subtract(token.TheDateTime).Ticks);
-                return time.TotalMinutes > 2;
-            }
-            else
-                return false;
-
-        }
+        }        
 
         public List<RefreshToken> GetAllRefreshTokens()
         {

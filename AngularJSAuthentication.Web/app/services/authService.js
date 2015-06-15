@@ -62,26 +62,15 @@ app.factory('authService', ['$http', '$q', 'localStorageService', 'ngAuthSetting
 
     };
 
-    var _logOut = function () {
-        
-        var authData = localStorageService.get('authorizationData');
-        var refreshToken = authData.refreshToken;
+    var _logOut = function () {                                
+        localStorageService.remove('authorizationData');
+
         ngAuthSettings.dateTime = null;
+        _authentication.isAuth = false;
+        _authentication.userName = "";
+        _authentication.useRefreshTokens = false;
 
-        $http.post(serviceBase + 'api/Account/deleteToken', {}, { headers: { 'X-refreshToken': refreshToken } })
-        .success(function () {
-            localStorageService.remove('authorizationData');            
-
-            _authentication.isAuth = false;
-            _authentication.userName = "";
-            _authentication.useRefreshTokens = false;
-
-            $location.path('/login');
-        })
-        .error(function (reason) {
-            alert("Resfresh token was not deleted!");
-        });
-                
+        $location.path('/login');                        
     };
 
     var _fillAuthData = function () {

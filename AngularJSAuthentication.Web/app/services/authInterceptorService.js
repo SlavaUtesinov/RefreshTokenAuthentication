@@ -66,14 +66,13 @@ app.factory('authInterceptorService', ['$q', '$injector', '$location', 'localSto
                         refreshInProgress = false;
 
                         //Тут полное разлогирование
-                        ngAuthSettings.dateTime = null;
+                        //ngAuthSettings.dateTime = null;
                         //Если этого не сделать, то возможная такая ситуация: после некоторой работы происходит по тем или иным причинам разлогин,
                         //но при попытке снова залогиниться, т.к. ngAuthSettings.dateTime всё ещё существут, то по прошествии 1 минуты будет сделан запрос на обновление
                         //refresh token, что привидет к непонятным последсвиям
 
                         var authService = $injector.get("authService");
-                        authService.logOut();
-                        $location.path('/login');
+                        authService.logOut();                        
 
                         deferred.resolve(config);
                         //deferred.reject(err);//По ходу здесь надо делать resolve
@@ -111,6 +110,9 @@ app.factory('authInterceptorService', ['$q', '$injector', '$location', 'localSto
             //    }
             //}
             //authService.logOut();            
+
+            //После того как не удалось обновить токены переходим на станицу '/login', однако продолжаем пытаться перейти на запрошенную страницу
+            //эта попытка ожидаемо возвращает нам 401 статус, чтобы не переходить на страницу с сообщением об отсутствии прав на просмотр делаем проверку на текущую страницу
             if (!refreshInProgress && $location.path() != '/login')
                 $location.path('/notAutorize');
             //if (isLogOut) {
