@@ -51,8 +51,8 @@ app.factory('authInterceptorService', ['$q', '$injector', '$location', 'localSto
 
         var deferred = $q.defer();
 
-        if (!_authService)
-            var _authService = $injector.get("authService");        
+        if (!_authService.refreshToken)
+            _authService = $injector.get("authService");        
 
         if (!refreshInProgress) {            
 
