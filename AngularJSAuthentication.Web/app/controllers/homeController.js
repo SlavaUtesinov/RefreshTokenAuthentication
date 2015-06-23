@@ -1,4 +1,6 @@
 ﻿'use strict';
-app.controller('homeController', ['$scope', function ($scope) {
+app.controller('homeController', ['$scope', 'authService', function ($scope, authService) {
+
+    $scope.authentication = authService.authentication;
    
 }]);
